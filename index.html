@@ -1,0 +1,721 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Universo ❤️</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<style>
+* { box-sizing:border-box; }
+
+body {
+  margin:0;
+  background:#090101;
+  color:#ffd09b;
+  font-family:Georgia,serif;
+  overflow-x:hidden;
+}
+
+#universe {
+  min-height:100vh;
+  text-align:center;
+  background:radial-gradient(ellipse at center,#481008 0%,#200502 55%,#080101 100%);
+  padding:15px 8px;
+}
+
+header p {
+  color:#e58b52;
+  font-size:10px;
+  letter-spacing:6px;
+  margin:8px;
+}
+
+h1 {
+  color:#ffb174;
+  font-size:24px;
+  letter-spacing:8px;
+  text-shadow:0 0 20px #ff541e;
+  margin:10px;
+}
+
+#scene {
+  width:100%;
+  height:calc(100svh - 145px);
+  min-height:540px;
+  max-height:950px;
+  position:relative;
+  margin:auto;
+  touch-action:none;
+  cursor:grab;
+}
+
+#scene:active { cursor:grabbing; }
+
+#scene canvas {
+  display:block;
+  width:100%;
+  height:100%;
+}
+
+.bottom {
+  color:#e88a56;
+  font-size:10px;
+  letter-spacing:3px;
+  margin:8px;
+}
+
+button {
+  padding:13px 22px;
+  background:#5c170e;
+  color:#ffcca0;
+  border:1px solid #e78b52;
+  border-radius:30px;
+  font-family:Georgia,serif;
+  font-size:11px;
+  letter-spacing:2px;
+  cursor:pointer;
+  transition:.3s;
+}
+
+button:hover {
+  background:#8a2818;
+  box-shadow:0 0 20px #e78b52;
+}
+
+/* PANTALLA DEL MENSAJE */
+
+#letter {
+  display:none;
+  min-height:100svh;
+  padding:25px 15px;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  background:radial-gradient(ellipse at center,#390b08,#160302 65%,#080101);
+}
+
+#letter.show {
+  display:flex;
+  animation:appear 1.2s ease;
+}
+
+.subtitle {
+  color:#dc7650;
+  font-size:11px;
+  letter-spacing:5px;
+}
+
+#letter h2 {
+  color:#ff5939;
+  font-size:clamp(36px,10vw,58px);
+  letter-spacing:7px;
+  line-height:1.3;
+  text-shadow:0 0 25px #a32b17;
+}
+
+.line {
+  width:100px;
+  height:1px;
+  background:#d76c43;
+  margin:12px auto 25px;
+}
+
+.envelope-area { margin:15px auto 25px; }
+
+.envelope {
+  position:relative;
+  width:230px;
+  height:145px;
+  margin:auto;
+  background:#b95637;
+  border:2px solid #e89a68;
+  border-radius:5px;
+  box-shadow:0 12px 35px #0009,0 0 25px #d76c4355;
+  cursor:pointer;
+  transition:transform .5s;
+}
+
+.envelope:hover { transform:translateY(-5px); }
+
+.envelope:before {
+  content:"";
+  position:absolute;
+  inset:0;
+  background:#d78358;
+  clip-path:polygon(0 0,50% 65%,100% 0);
+}
+
+.envelope:after {
+  content:"♥";
+  position:absolute;
+  top:48px;
+  left:50%;
+  transform:translateX(-50%);
+  color:#ffdfad;
+  font-size:30px;
+}
+
+.envelope-text {
+  color:#ffdfc0;
+  font-size:12px;
+  letter-spacing:3px;
+}
+
+#openedCard {
+  display:none;
+  width:min(90%,420px);
+  padding:30px 24px;
+  background:linear-gradient(145deg,#ffe4c5,#e9b58e);
+  color:#64291c;
+  border:2px solid #d58b60;
+  border-radius:8px;
+  box-shadow:0 15px 45px #0009;
+  animation:appear 1s ease;
+}
+
+#openedCard h3 {
+  color:#a43d27;
+  font-size:25px;
+  letter-spacing:3px;
+}
+
+#openedCard p {
+  font-size:16px;
+  line-height:1.9;
+  font-style:italic;
+}
+
+.signature {
+  color:#a43d27;
+  font-size:11px;
+  letter-spacing:3px;
+  margin-top:25px;
+}
+
+#backButton { margin-top:20px; }
+
+@keyframes appear {
+  from { opacity:0; transform:translateY(20px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+@media(max-width:600px) {
+  #universe { padding:10px 5px; }
+  h1 { font-size:20px; }
+  #scene {
+    height:calc(100svh - 125px);
+    min-height:530px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- PRIMERA PANTALLA: UNIVERSO -->
+
+<div id="universe">
+  <header>
+    <p>✦ UN UNIVERSO PARA TI ✦</p>
+    <h1>MI UNIVERSO</h1>
+  </header>
+
+  <div id="scene"></div>
+
+  <p class="bottom">✧ ERES MI LUGAR FAVORITO ✧</p>
+
+  <button onclick="openLetter()">
+    DESCUBRIR MENSAJE ❤️
+  </button>
+</div>
+
+<!-- SEGUNDA PANTALLA: MENSAJE -->
+
+<div id="letter">
+  <p class="subtitle">UN DÍA ESPECIAL PARA ALGUIEN ESPECIAL</p>
+  <h2>4 DE<br>NOVIEMBRE</h2>
+  <div class="line"></div>
+
+  <div id="envelopeArea">
+    <div class="envelope-area">
+      <div class="envelope" onclick="showCard()"></div>
+    </div>
+
+    <p class="envelope-text">UNA CARTITA PARA TI ❤️</p>
+
+    <button onclick="showCard()">ABRIR MI CARTITA ✉</button>
+  </div>
+
+  <div id="openedCard">
+    <h3>MI FLOR ❤️</h3>
+    <p>
+      Hoy comienza un nuevo mes,
+      y mi mayor motivo para sonreír
+      sigue siendo haberte conocido.
+      <br><br>
+      Entre tantas personas y lugares
+      de este mundo, me alegra que
+      nuestros caminos se hayan encontrado.
+      Nunca olvides lo especial que eres.
+    </p>
+    <p class="signature">❤️ CON MUCHO CARIÑO ❤️</p>
+  </div>
+
+  <button id="backButton" onclick="backUniverse()">
+    VOLVER AL UNIVERSO
+  </button>
+</div>
+
+<script>
+let scene,camera,renderer,heart;
+let world,orbitGroups=[],wordObjects=[];
+let clock=new THREE.Clock();
+
+let dragging=false;
+let pointers=new Map();
+let previousX=0,previousY=0;
+let rotateX=0,rotateY=0;
+let velocityX=0,velocityY=0;
+let pinchDistance=0;
+
+function createUniverse() {
+  const container=document.getElementById("scene");
+
+  scene=new THREE.Scene();
+  world=new THREE.Group();
+  scene.add(world);
+
+  camera=new THREE.PerspectiveCamera(
+    45,
+    container.clientWidth/container.clientHeight,
+    0.1,
+    150
+  );
+
+  camera.position.set(0,0,14);
+
+  renderer=new THREE.WebGLRenderer({
+    antialias:true,
+    alpha:true
+  });
+
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.7));
+  renderer.setSize(container.clientWidth,container.clientHeight);
+  container.appendChild(renderer.domElement);
+
+  world.add(new THREE.AmbientLight(0xffa080,1.3));
+
+  const light1=new THREE.PointLight(0xff5522,4,20);
+  light1.position.set(3,4,5);
+  world.add(light1);
+
+  const light2=new THREE.PointLight(0xffaa44,3,20);
+  light2.position.set(-4,-3,3);
+  world.add(light2);
+
+  // CORAZÓN 3D
+
+  const shape=new THREE.Shape();
+
+  shape.moveTo(0,-0.9);
+  shape.bezierCurveTo(-0.5,-0.4,-1.9,0.5,-1.65,1.35);
+  shape.bezierCurveTo(-1.4,2.15,-0.35,2.05,0,1.2);
+  shape.bezierCurveTo(0.35,2.05,1.4,2.15,1.65,1.35);
+  shape.bezierCurveTo(1.9,0.5,0.5,-0.4,0,-0.9);
+
+  const geometry=new THREE.ExtrudeGeometry(shape,{
+    depth:0.85,
+    bevelEnabled:true,
+    bevelSegments:14,
+    steps:3,
+    bevelSize:0.2,
+    bevelThickness:0.22,
+    curveSegments:48
+  });
+
+  geometry.center();
+
+  const material=new THREE.MeshPhongMaterial({
+    color:0xff3928,
+    emissive:0x8d1208,
+    emissiveIntensity:0.65,
+    shininess:110,
+    specular:0xffd0a0
+  });
+
+  heart=new THREE.Mesh(geometry,material);
+  heart.scale.set(0.85,0.85,0.85);
+  world.add(heart);
+
+  const glow=new THREE.PointLight(0xff421c,3,6);
+  glow.position.set(0,0,1.5);
+  world.add(glow);
+
+  // ÓRBITAS
+
+  const ringData=[
+    {r:1.8,x:0.2,y:0.2,z:0.2,sx:1.2,sy:0.65},
+    {r:2.2,x:1.1,y:0.3,z:0.1,sx:1.25,sy:0.55},
+    {r:2.7,x:0.7,y:0.8,z:0.4,sx:1.35,sy:0.5},
+    {r:3.1,x:1.4,y:0.3,z:0.2,sx:1.4,sy:0.4},
+    {r:3.6,x:0.5,y:1.1,z:0.5,sx:1.5,sy:0.35}
+  ];
+
+  ringData.forEach((d,i)=>{
+    const group=new THREE.Group();
+
+    const ring=new THREE.Mesh(
+      new THREE.TorusGeometry(d.r,0.009,8,180),
+      new THREE.MeshBasicMaterial({
+        color:i%2?0xffa04d:0xff6132,
+        transparent:true,
+        opacity:0.75
+      })
+    );
+
+    ring.scale.set(d.sx,d.sy,1);
+    group.add(ring);
+    group.rotation.set(d.x,d.y,d.z);
+    world.add(group);
+    orbitGroups.push(group);
+  });
+
+  // ESTRELLAS
+
+  const starGeometry=new THREE.BufferGeometry();
+  const positions=[];
+
+  for(let i=0;i<800;i++){
+    positions.push(
+      (Math.random()-0.5)*17,
+      (Math.random()-0.5)*23,
+      (Math.random()-0.5)*10
+    );
+  }
+
+  starGeometry.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(positions,3)
+  );
+
+  const stars=new THREE.Points(
+    starGeometry,
+    new THREE.PointsMaterial({
+      color:0xffc18a,
+      size:0.025,
+      transparent:true,
+      opacity:0.8
+    })
+  );
+
+  world.add(stars);
+
+  // FRASES CON EMOJIS
+
+  const words=[
+    "❤️ MI AMOR","MI BB 🧸","MI NIÑA 💗","MI OSITA 🐻",
+    "MI DORMILONA 😴","🌹 MI FLOR","MI VIDA 💕",
+    "ERES ÚNICA ✨","MI FELICIDAD 🥰","MI PERSONA FAVORITA",
+    "MI REINA 👑","MI PRINCESA 💖","MI CIELO ☁️","MI CORAZÓN ❤️",
+    "MI BONITA 🌷","MI CONSENTIDA","MI TESORO 💎",
+    "MI ESTRELLA ⭐","MI LUZ ✨","MI MUNDO 🌎","MI PAZ 🕊️",
+    "MI RAZÓN 💞","MI ALEGRÍA 😊","MI CHIQUITA",
+    "MI ANGELITO 😇","MI TERNURA","TE QUIERO ❤️",
+    "TE ADORO 💗","ERES MI TODO","MI SUEÑO REAL 🌙",
+    "MI LUGAR FAVORITO","MI NIÑA HERMOSA 🌹",
+    "MI AMOR BONITO 💕","MI SOL ☀️","POR SIEMPRE ♾️",
+    "SIEMPRE TÚ ❤️","MI DESTINO","MI PERSONA ESPECIAL",
+    "MI UNIVERSO 🌌","MI BEBÉ 🧸","MI CARIÑO",
+    "MI PEQUEÑA 🥺","MI PRECIOSA 💖","MI DULZURA 🍯",
+    "MI VIDA ENTERA","MI LUNITA 🌙","MI ESTRELLITA ⭐",
+    "MI NIÑA BONITA","ERES MI PAZ 🕊️","MI TODO 💗",
+    "MI FELICIDAD 🥰","MI MUNDO ENTERO","TE CUIDO ❤️",
+    "MI CORAZÓN ES TUYO","MI CASUALIDAD FAVORITA ✨",
+    "MI MÁS BONITA HISTORIA","MI AMOR ETERNO 💞",
+    "MI LUGAR SEGURO","MI PERSONITA 🧸"
+  ];
+
+  function makeText(text,size) {
+    const canvas=document.createElement("canvas");
+    canvas.width=640;
+    canvas.height=150;
+
+    const ctx=canvas.getContext("2d");
+    ctx.font=`bold ${size}px Georgia, "Apple Color Emoji", "Segoe UI Emoji", sans-serif`;
+    ctx.textAlign="center";
+    ctx.textBaseline="middle";
+    ctx.shadowColor="#ff7028";
+    ctx.shadowBlur=17;
+    ctx.fillStyle="#ffe0b0";
+    ctx.fillText(text,320,75);
+
+    const texture=new THREE.CanvasTexture(canvas);
+
+    const sprite=new THREE.Sprite(
+      new THREE.SpriteMaterial({
+        map:texture,
+        transparent:true,
+        depthWrite:false
+      })
+    );
+
+    sprite.scale.set(size/35*2.3,0.43,1);
+    return sprite;
+  }
+
+  const columns=[-5.1,-3.5,-1.8,0,1.8,3.5,5.1];
+
+  words.forEach((word,i)=>{
+    const size=(i%6===0)?37:(i%3===0)?30:23;
+    const sprite=makeText(word,size);
+
+    const column=columns[i%columns.length];
+    const row=Math.floor(i/columns.length);
+
+    const x=column+Math.sin(i*2.4)*0.55;
+    const y=5.8-row*1.15+Math.cos(i*1.8)*0.35;
+    const z=(i%5)*0.38-0.8;
+
+    sprite.position.set(x,y,z);
+    world.add(sprite);
+
+    wordObjects.push({
+      sprite:sprite,
+      baseX:x,
+      baseY:y,
+      baseZ:z,
+      phase:i*0.8
+    });
+  });
+
+  const highlights=[
+    {text:"MI VIDA 💗",x:2.5,y:2.6},
+    {text:"MI PAZ 🕊️",x:-2.6,y:-2.4},
+    {text:"MI FELICIDAD 🥰",x:3.2,y:-3.3},
+    {text:"MI UNIVERSO 🌌",x:-3.2,y:3.3},
+    {text:"TE QUIERO ❤️",x:0,y:4.7},
+    {text:"MI AMOR 💕",x:-3.8,y:-4.6}
+  ];
+
+  highlights.forEach((item,i)=>{
+    const sprite=makeText(item.text,39);
+    sprite.position.set(item.x,item.y,1.3);
+    world.add(sprite);
+
+    wordObjects.push({
+      sprite:sprite,
+      baseX:item.x,
+      baseY:item.y,
+      baseZ:1.3,
+      phase:i*1.2
+    });
+  });
+
+  // CONTROLES DE MOUSE Y DEDO
+
+  const canvas=renderer.domElement;
+  canvas.style.touchAction="none";
+
+  function distanceBetweenTouches(){
+    const pts=[...pointers.values()];
+    if(pts.length<2)return 0;
+
+    return Math.hypot(
+      pts[0].x-pts[1].x,
+      pts[0].y-pts[1].y
+    );
+  }
+
+  canvas.addEventListener("pointerdown",e=>{
+    pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    canvas.setPointerCapture(e.pointerId);
+
+    if(pointers.size===1){
+      dragging=true;
+      previousX=e.clientX;
+      previousY=e.clientY;
+    }
+
+    if(pointers.size===2){
+      dragging=false;
+      pinchDistance=distanceBetweenTouches();
+    }
+  });
+
+  canvas.addEventListener("pointermove",e=>{
+    if(!pointers.has(e.pointerId))return;
+
+    pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+
+    if(pointers.size===1 && dragging){
+      const dx=e.clientX-previousX;
+      const dy=e.clientY-previousY;
+
+      rotateY+=dx*0.006;
+      rotateX+=dy*0.006;
+
+      velocityY=dx*0.0008;
+      velocityX=dy*0.0008;
+
+      previousX=e.clientX;
+      previousY=e.clientY;
+    }
+
+    if(pointers.size===2){
+      const newDistance=distanceBetweenTouches();
+
+      if(pinchDistance>0 && newDistance>0){
+        camera.position.z-=(newDistance-pinchDistance)*0.018;
+
+        camera.position.z=THREE.MathUtils.clamp(
+          camera.position.z,7,25
+        );
+      }
+
+      pinchDistance=newDistance;
+    }
+  });
+
+  function stopPointer(e){
+    pointers.delete(e.pointerId);
+
+    if(pointers.size===0){
+      dragging=false;
+      pinchDistance=0;
+    }
+
+    if(pointers.size===1){
+      const remaining=[...pointers.values()][0];
+      previousX=remaining.x;
+      previousY=remaining.y;
+      dragging=true;
+    }
+  }
+
+  canvas.addEventListener("pointerup",stopPointer);
+  canvas.addEventListener("pointercancel",stopPointer);
+
+  // ZOOM CON RUEDA DEL MOUSE
+
+  canvas.addEventListener("wheel",e=>{
+    e.preventDefault();
+
+    camera.position.z+=e.deltaY*0.008;
+
+    camera.position.z=THREE.MathUtils.clamp(
+      camera.position.z,7,25
+    );
+  },{passive:false});
+
+  window.addEventListener("resize",resizeScene);
+
+  animate();
+}
+
+function resizeScene() {
+  if(!renderer)return;
+
+  const container=document.getElementById("scene");
+
+  camera.aspect=container.clientWidth/container.clientHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(
+    container.clientWidth,
+    container.clientHeight
+  );
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  const delta=Math.min(clock.getDelta(),0.05);
+  const elapsed=clock.elapsedTime;
+
+  // CORAZÓN
+
+  heart.rotation.y=elapsed*0.18+Math.sin(elapsed*0.18)*0.08;
+  heart.rotation.x=Math.sin(elapsed*0.15)*0.06;
+
+  const pulse=1+Math.sin(elapsed*1.1)*0.025;
+  heart.scale.set(0.85*pulse,0.85*pulse,0.85*pulse);
+
+  // ÓRBITAS
+
+  orbitGroups.forEach((group,i)=>{
+    group.rotation.y+=delta*(i%2?-0.006:0.006);
+    group.rotation.z+=delta*0.002;
+  });
+
+  // FRASES FLOTANDO
+
+  wordObjects.forEach(item=>{
+    item.sprite.position.y=
+      item.baseY+Math.sin(elapsed*0.45+item.phase)*0.10;
+
+    item.sprite.position.x=
+      item.baseX+Math.sin(elapsed*0.25+item.phase)*0.045;
+  });
+
+  // ROTACIÓN MANUAL
+
+  if(!dragging){
+    rotateY+=velocityY;
+    rotateX+=velocityX;
+    velocityX*=0.96;
+    velocityY*=0.96;
+  }
+
+  rotateX=THREE.MathUtils.clamp(rotateX,-0.9,0.9);
+
+  world.rotation.x=rotateX;
+  world.rotation.y=rotateY;
+
+  renderer.render(scene,camera);
+}
+
+// BOTÓN DESCUBRIR MENSAJE
+
+function openLetter() {
+  document.getElementById("universe").style.display="none";
+  document.getElementById("letter").classList.add("show");
+  document.getElementById("envelopeArea").style.display="block";
+  document.getElementById("openedCard").style.display="none";
+  window.scrollTo(0,0);
+}
+
+// ABRIR CARTITA
+
+function showCard() {
+  document.getElementById("envelopeArea").style.display="none";
+  document.getElementById("openedCard").style.display="block";
+}
+
+// REGRESAR AL UNIVERSO
+
+function backUniverse() {
+  document.getElementById("letter").classList.remove("show");
+  document.getElementById("universe").style.display="block";
+  window.scrollTo(0,0);
+}
+
+// INICIAR UNIVERSO
+
+if(window.THREE) {
+  createUniverse();
+} else {
+  document.getElementById("scene").innerHTML=
+    "<p>No se pudo cargar el universo 3D. Comprueba tu conexión.</p>";
+}
+</script>
+
+</body>
+</html>
+
+
+
+
+...
